@@ -28,7 +28,7 @@ export default function AdminPanel({ cars, onUpdateCars, onClose, onResetDatabas
     year: 2026,
     startingPrice: 35000000,
     engineType: 'Tesla Ion Drive',
-    category: 'Interstellar GT',
+    category: 'coupe',
     description: '',
     performance: {
       acceleration: '2.0s',
@@ -303,7 +303,7 @@ export default function AdminPanel({ cars, onUpdateCars, onClose, onResetDatabas
       year: Number(newCar.year) || 2026,
       startingPrice: Number(newCar.startingPrice) || 35000000,
       engineType: newCar.engineType as any || 'Tesla Ion Drive',
-      category: newCar.category as any || 'Interstellar GT',
+      category: newCar.category as any || 'coupe',
       description: newCar.description || 'Custom handbuilt elite class space explorer uploaded by administrator.',
       performance: {
         acceleration: newCar.performance?.acceleration || '2.0s',
@@ -332,7 +332,7 @@ export default function AdminPanel({ cars, onUpdateCars, onClose, onResetDatabas
       year: 2026,
       startingPrice: 35000000,
       engineType: 'Tesla Ion Drive',
-      category: 'Interstellar GT',
+      category: 'coupe',
       description: '',
       performance: {
         acceleration: '2.0s',
@@ -628,10 +628,12 @@ export default function AdminPanel({ cars, onUpdateCars, onClose, onResetDatabas
                     onChange={(e) => setNewCar({ ...newCar, category: e.target.value as any })}
                     className="w-full bg-black border border-zinc-900 focus:border-[#8B0000] text-xs text-zinc-300 p-3 focus:outline-none rounded-sm uppercase tracking-widest cursor-pointer mb-4"
                   >
-                    <option value="Interstellar GT">Interstellar GT</option>
-                    <option value="Martian Cruiser">Martian Cruiser</option>
-                    <option value="Lunar Outlaw">Lunar Outlaw</option>
-                    <option value="Deep-Space Utility">Deep-Space Utility</option>
+                    <option value="sedan">sedan</option>
+                    <option value="suv">suv</option>
+                    <option value="hatchback">hatchback</option>
+                    <option value="coupe">coupe</option>
+                    <option value="truck">truck</option>
+                    <option value="minivan">minivan</option>
                   </select>
 
                   <div className="border border-zinc-900 bg-black/40 p-4 rounded-sm space-y-3">
@@ -1384,10 +1386,12 @@ export default function AdminPanel({ cars, onUpdateCars, onClose, onResetDatabas
                       onChange={(e) => setEditingCar({ ...editingCar, category: e.target.value })}
                       className="w-full bg-black border border-zinc-900 focus:border-[#8B0000] text-xs text-zinc-300 p-3 focus:outline-none rounded-sm uppercase tracking-widest cursor-pointer mb-4"
                     >
-                      <option value="Interstellar GT">Interstellar GT</option>
-                      <option value="Martian Cruiser">Martian Cruiser</option>
-                      <option value="Lunar Outlaw">Lunar Outlaw</option>
-                      <option value="Deep-Space Utility">Deep-Space Utility</option>
+                      <option value="sedan">sedan</option>
+                      <option value="suv">suv</option>
+                      <option value="hatchback">hatchback</option>
+                      <option value="coupe">coupe</option>
+                      <option value="truck">truck</option>
+                      <option value="minivan">minivan</option>
                     </select>
 
                     <div className="border border-zinc-900 bg-black/40 p-4 rounded-sm space-y-3">

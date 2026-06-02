@@ -1,17 +1,18 @@
 export function simplifyCategory(category: string): string {
-  switch (category) {
-    case 'Interstellar GT':
-      return 'Luxury Sports Tourer (GT)';
-    case 'Martian Cruiser':
-      return 'Heavy Off-Road SUV';
-    case 'Lunar Outlaw':
-      return 'All-Terrain Sports Buggy';
-    case 'Deep-Space Utility':
-      return 'Premium Family SUV';
-    case 'Luxury SUV':
+  const norm = category.toLowerCase();
+  switch (norm) {
+    case 'sedan':
+      return 'Premium Sedan';
+    case 'suv':
       return 'Luxury SUV';
-    case 'Performance Sedan':
-      return 'Performance Sedan';
+    case 'hatchback':
+      return 'Sport Hatchback';
+    case 'coupe':
+      return 'Grand Coupe';
+    case 'truck':
+      return 'Heavy Duty Truck';
+    case 'minivan':
+      return 'Executive Minivan';
     default:
       return category;
   }

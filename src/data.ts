@@ -8,7 +8,7 @@ export const INITIAL_CARS: Car[] = [
     year: 2026,
     startingPrice: 48000000,
     engineType: 'Multi-motor Electric AWD',
-    category: 'Grand Tourer (GT)',
+    category: 'coupe',
     description: 'An ultra-luxury grand tourer engineered to glide effortlessly over long distances. Features premium carbon-titanium body panels, hand-stitched leather interiors, and an adaptive active suspension tuned for supreme high-speed comfort.',
     performance: {
       acceleration: '1.9s',
@@ -76,7 +76,7 @@ export const INITIAL_CARS: Car[] = [
     year: 2026,
     startingPrice: 125000000,
     engineType: 'Twin-Turbo V8',
-    category: 'Offroad 6x6',
+    category: 'truck',
     description: 'The ultimate luxury off-road flagship. A powerhouse heavy cruiser fitted with a high-torque twin-turbocharged V8 engine, active electronic diff-locks on all three axles, and a custom handcrafted wood-and-leather luxury command cabin.',
     performance: {
       acceleration: '2.8s',
@@ -133,7 +133,7 @@ export const INITIAL_CARS: Car[] = [
     year: 2025,
     startingPrice: 34000000,
     engineType: 'Electric Dual-Motor',
-    category: 'Sports Buggy',
+    category: 'hatchback',
     description: 'An open-air high-velocity recreation vehicle built for absolute fun on rugged sand dunes and gravel trails. Features an ultra-light carbon fiber monocoque safety cell, dual high-torque electric motors, and long-travel off-road active dampers.',
     performance: {
       acceleration: '2.2s',
@@ -190,7 +190,7 @@ export const INITIAL_CARS: Car[] = [
     year: 2026,
     startingPrice: 78000000,
     engineType: 'Hydrogen Fuel-Cell Hybrid',
-    category: 'Heavy Cruiser & SUV',
+    category: 'suv',
     description: 'An executive-level grand overland cruiser engineered specifically for long-distance remote exploration. Features active climate control, integrated luxury sleeping quarters, premium water purification, and an ultra-efficient hydrogen fuel-cell hybrid powertrain.',
     performance: {
       acceleration: '3.4s',
@@ -247,7 +247,7 @@ export const INITIAL_CARS: Car[] = [
     year: 2026,
     startingPrice: 91000000,
     engineType: 'Quad-Turbocharged V12',
-    category: 'Hypercar',
+    category: 'coupe',
     description: 'An ultimate track-focused hybrid monster. Nemesis utilizes a bespoke state-of-the-art quad-turbocharged V12 engine paired with high-performance lightweight electric motors for neck-snapping acceleration and speed. Aerodynamically sculpted for high downforce.',
     performance: {
       acceleration: '1.7s',
@@ -304,7 +304,7 @@ export const INITIAL_CARS: Car[] = [
     year: 2026,
     startingPrice: 320000000,
     engineType: 'V12 Twin-Turbo',
-    category: 'Sedan Yacht Class',
+    category: 'sedan',
     description: 'Unprecedented luxury and automotive grandeur. Zenith features hand-polished precious metal detailing, a private noise-insulated rear cabin with reclining leather massage seats, a dynamic star-pattern starlight headliner, and a whisper-silent twin-turbocharged V12.',
     performance: {
       acceleration: '1.2s',
@@ -361,7 +361,7 @@ export const INITIAL_CARS: Car[] = [
     year: 2022,
     startingPrice: 4500000,
     engineType: 'Gasoline',
-    category: 'Luxury SUV',
+    category: 'suv',
     description: 'A masterpiece of terrestrial luxury and engineering. This pristine BMW X5 combines spacious internal cabin berths with executive black gloss styling, active electronic damping, and incredible cargo utility.',
     performance: {
       acceleration: '4.7s',
@@ -412,7 +412,7 @@ export const INITIAL_CARS: Car[] = [
     year: 2023,
     startingPrice: 7000000,
     engineType: 'Electric',
-    category: 'Performance Sedan',
+    category: 'sedan',
     description: 'An peak-efficiency all-electric pioneer from Earth. Plated in high-gloss pearl white, with only 5,000 km of planetary travel. Fast-charge ion capability coupled with instant torque transmission.',
     performance: {
       acceleration: '1.99s',
@@ -454,7 +454,7 @@ export const INITIAL_CARS: Car[] = [
     year: 2024,
     startingPrice: 5800000,
     engineType: 'Gasoline',
-    category: 'Performance Sedan',
+    category: 'coupe',
     description: 'An track-focused performance masterpiece resulting from decades of legendary racing heritage. Features a finely-tuned twin-scroll turbocharged inline-six, active rear differential, adaptive suspension, and racing-focused cockpits.',
     performance: {
       acceleration: '3.9s',
@@ -510,7 +510,7 @@ export const INITIAL_CARS: Car[] = [
     year: 2012,
     startingPrice: 37500000,
     engineType: 'Gasoline',
-    category: 'Interstellar GT',
+    category: 'coupe',
     description: 'A legendary automotive milestone utilizing composite carbon-fiber monocoque structure and a custom high-revving naturally aspirated V10 engine designed in partnership with Yamaha. F1 acoustics integrated seamlessly.',
     performance: {
       acceleration: '3.6s',
@@ -566,7 +566,7 @@ export const INITIAL_CARS: Car[] = [
     year: 2024,
     startingPrice: 104000000,
     engineType: 'Electric',
-    category: 'Performance Sedan',
+    category: 'sedan',
     description: 'An electric masterpiece of engineering and craftsmanship, featuring legendary Quattro all-wheel drive, dual-motor power delivery, futuristic sound orchestration, and highly responsive technological cockpits.',
     performance: {
       acceleration: '2.9s',
