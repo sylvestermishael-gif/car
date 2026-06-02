@@ -10,10 +10,11 @@ import DrivingTransition from './components/DrivingTransition';
 import SpecsModal from './components/SpecsModal';
 import AdminPanel from './components/AdminPanel';
 import CarCard from './components/CarCard';
+import FaqReviews from './components/FaqReviews';
 
 export default function App() {
-  // Screen router: 'landing' | 'catalog' | 'services' | 'brands' | 'admin'
-  const [currentView, setCurrentView] = useState<'landing' | 'catalog' | 'services' | 'brands' | 'admin'>('landing');
+  // Screen router: 'landing' | 'catalog' | 'services' | 'brands' | 'faq' | 'admin'
+  const [currentView, setCurrentView] = useState<'landing' | 'catalog' | 'services' | 'brands' | 'faq' | 'admin'>('landing');
 
   // Secret code keyboard override system state
   const [keySequence, setKeySequence] = useState<string>('');
@@ -223,8 +224,8 @@ export default function App() {
           </motion.div>
         )}
 
-        {/* VIEW 2: CORE PUBLIC EXPERIENCE SHELL (SHOWROOM, SERVICES, BRANDS) */}
-        {(currentView === 'catalog' || currentView === 'services' || currentView === 'brands') && (
+        {/* VIEW 2: CORE PUBLIC EXPERIENCE SHELL (SHOWROOM, SERVICES, BRANDS, FAQ) */}
+        {(currentView === 'catalog' || currentView === 'services' || currentView === 'brands' || currentView === 'faq') && (
           <motion.div
             key="showroom-shell"
             initial={{ opacity: 0, scale: 0.99 }}
@@ -238,7 +239,7 @@ export default function App() {
             <div className="absolute bottom-[20%] right-[15%] w-[350px] h-[350px] bg-[#8B0000]/5 blur-[140px] rounded-full pointer-events-none" />
 
             {/* Premium Header Navbar in AutoAventus style */}
-            <nav className="h-20 flex items-center justify-between px-6 md:px-10 border-b border-[#222]/45 bg-[#050505] relative z-30 select-none">
+            <nav className="h-20 flex items-center justify-between px-4 xs:px-6 md:px-10 border-b border-[#222]/45 bg-[#050505] relative z-30 select-none">
               <div 
                 onClick={(e) => {
                   if (e.shiftKey) {
@@ -247,13 +248,13 @@ export default function App() {
                     setCurrentView('landing');
                   }
                 }} 
-                className="text-2xl font-sans font-black tracking-widest flex items-center cursor-pointer text-[#8B0000]"
+                className="text-lg xs:text-xl sm:text-2xl font-sans font-black tracking-widest flex items-center cursor-pointer text-[#8B0000]"
                 title="Hold Shift + Click for security override"
               >
                 AUTOAVENTUS
               </div>
               
-              <div className="flex gap-4 sm:gap-8 md:gap-10 text-[10px] uppercase tracking-[0.3em] font-bold">
+              <div className="flex gap-2.5 xs:gap-4 sm:gap-8 md:gap-10 text-[8.5px] xs:text-[10px] uppercase tracking-[0.15em] xs:tracking-[0.25em] sm:tracking-[0.3em] font-black font-bold">
                 <button 
                   onClick={() => setCurrentView('catalog')}
                   className={`cursor-pointer transition-colors pb-1 ${
@@ -283,6 +284,16 @@ export default function App() {
                   }`}
                 >
                   Brands
+                </button>
+                <button 
+                  onClick={() => setCurrentView('faq')}
+                  className={`cursor-pointer transition-colors pb-1 ${
+                    currentView === 'faq' 
+                      ? 'text-white border-b border-[#8B0000]' 
+                      : 'text-zinc-500 hover:text-white'
+                  }`}
+                >
+                  FAQ & Reviews
                 </button>
                 <button 
                   onClick={() => {
@@ -531,7 +542,7 @@ export default function App() {
                 {/* GRID RESULTS OF EXOTIC CARS */}
                 <div className="min-h-[500px]">
                   {filteredCars.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8">
                       {filteredCars.map((car) => (
                         <CarCard
                           key={car.id}
@@ -1083,6 +1094,58 @@ export default function App() {
                 </div>
               </div>
 
+              {/* Visual Section: Your No. 1 Dealer Callout banner */}
+              <section className="mt-auto py-16 bg-gradient-to-r from-black via-zinc-950 to-black border-y border-zinc-900 text-center relative overflow-hidden">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#8b000030_0%,_transparent_65%)]" />
+                <div className="relative z-10 max-w-xl mx-auto px-4">
+                  <h3 className="text-xl sm:text-2xl font-serif italic text-white font-black uppercase tracking-[0.2em] mb-4">
+                    Your No. 1 Dealer
+                  </h3>
+                  <p className="text-zinc-400 text-[10px] font-mono uppercase tracking-widest leading-relaxed">
+                    Supplying the premium tier of elite performance and custom luxury vehicles designed for outstanding comfort and power.
+                  </p>
+                </div>
+              </section>
+
+              {/* Curated visual showroom footer */}
+              <footer className="border-t border-[#111] py-12 text-center text-[10px] text-zinc-650 font-mono select-none">
+                <p 
+                  onClick={() => setShowOverrideModal(true)}
+                  className="tracking-[0.25em] uppercase font-bold cursor-pointer hover:text-white transition-colors"
+                  title="System administration override link"
+                >
+                  AUTOAVENTUS PREMIUM VEHICLES SHOWROOM • COPYRIGHT © 2026
+                </p>
+                <p className="text-[9px] text-zinc-700 uppercase tracking-widest mt-1.5">The ultimate experience in high-end luxury and custom performance vehicles</p>
+                <div className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-3 text-neutral-400">
+                  <span>Contact: <a href="tel:+2347082361899" className="hover:text-red-500 underline">+234 708 236 1899</a></span>
+                  <span className="hidden sm:inline">•</span>
+                  <span>Email: <a href="mailto:autoaventusaa@gmail.com" target="_blank" rel="noopener noreferrer" className="hover:text-red-500 underline text-red-500" title="Open or copy email address: autoaventusaa@gmail.com">autoaventusaa@gmail.com</a></span>
+                  <span className="hidden sm:inline">•</span>
+                  <a href="https://wa.link/ru8m34" target="_blank" rel="noreferrer" className="hover:text-green-505 text-green-500 hover:underline uppercase tracking-wide">WhatsApp Support Chat</a>
+                </div>
+              </footer>
+            </motion.div>
+          )}
+
+          {/* FAQ & REVIEWS PAGE */}
+          {currentView === 'faq' && (
+            <motion.div
+              key="faq-subview"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.35 }}
+              className="flex-grow overflow-y-auto custom-scrollbar flex flex-col"
+            >
+              <FaqReviews 
+                cars={cars} 
+                onOpenBooking={() => {
+                  setCurrentView('catalog');
+                  setTimeout(() => scrollToSection('booking-section'), 120);
+                }}
+              />
+              
               {/* Visual Section: Your No. 1 Dealer Callout banner */}
               <section className="mt-auto py-16 bg-gradient-to-r from-black via-zinc-950 to-black border-y border-zinc-900 text-center relative overflow-hidden">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#8b000030_0%,_transparent_65%)]" />

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   Lock, KeyRound, Database, RefreshCw, Plus, ToggleLeft, ToggleRight, 
   Trash2, DollarSign, CheckCircle2, Eye, EyeOff, Home, ArrowRight,
-  Upload, Image
+  Upload, Image, X, Edit, Sliders
 } from 'lucide-react';
 import { Car, TrimLevel, ColorOption } from '../types';
 
@@ -53,6 +53,18 @@ export default function AdminPanel({ cars, onUpdateCars, onClose, onResetDatabas
   const [trimPrice, setTrimPrice] = useState<number>(150000);
   const [trimHP, setTrimHP] = useState<number>(650);
 
+  // Gallery Management States
+  const [selectedCarForGallery, setSelectedCarForGallery] = useState<Car | null>(null);
+  const [galleryUrlInput, setGalleryUrlInput] = useState('');
+
+  // Editing Car Master States
+  const [editingCar, setEditingCar] = useState<Car | null>(null);
+  const [editTrimName, setEditTrimName] = useState('');
+  const [editTrimPrice, setEditTrimPrice] = useState<number>(150000);
+  const [editTrimHP, setEditTrimHP] = useState<number>(650);
+  const [editColorName, setEditColorName] = useState('');
+  const [editColorHex, setEditColorHex] = useState('#8B0000');
+
   // Authentication validation
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -96,16 +108,137 @@ export default function AdminPanel({ cars, onUpdateCars, onClose, onResetDatabas
   const handleImageUploadForCar = (carId: string, base64OrUrl: string) => {
     const updated = cars.map(car => {
       if (car.id === carId) {
+        // If the new image is not in the list, prepend/add to current list
+        const currentImages = [...(car.images || [])];
+        if (!currentImages.includes(base64OrUrl)) {
+          currentImages.unshift(base64OrUrl);
+        }
         return { 
           ...car, 
           mainImage: base64OrUrl,
-          images: [base64OrUrl],
+          images: currentImages,
           colors: car.colors.map((c, i) => i === 0 ? { ...c, imageUrl: base64OrUrl } : c)
         };
       }
       return car;
     });
     onUpdateCars(updated);
+  };
+
+  // Gallery Modification Helpers
+  const handleAddImageToGallery = (imageUrl: string) => {
+    if (!selectedCarForGallery || !imageUrl.trim()) return;
+    
+    const updatedImages = [...(selectedCarForGallery.images || [])];
+    if (!updatedImages.includes(imageUrl.trim())) {
+      updatedImages.push(imageUrl.trim());
+    }
+    
+    const updatedCar = {
+      ...selectedCarForGallery,
+      images: updatedImages,
+      mainImage: selectedCarForGallery.mainImage || imageUrl.trim()
+    };
+    
+    setSelectedCarForGallery(updatedCar);
+    const updatedCars = cars.map(c => c.id === selectedCarForGallery.id ? updatedCar : c);
+    onUpdateCars(updatedCars);
+  };
+
+  const handleMakeMainImage = (imageUrl: string) => {
+    if (!selectedCarForGallery) return;
+    
+    const updatedCar = {
+      ...selectedCarForGallery,
+      mainImage: imageUrl,
+      colors: selectedCarForGallery.colors.map((c, i) => i === 0 ? { ...c, imageUrl: imageUrl } : c)
+    };
+    
+    setSelectedCarForGallery(updatedCar);
+    const updatedCars = cars.map(c => c.id === selectedCarForGallery.id ? updatedCar : c);
+    onUpdateCars(updatedCars);
+  };
+
+  const handleRemoveImageFromGallery = (imageUrl: string) => {
+    if (!selectedCarForGallery) return;
+    
+    const updatedImages = (selectedCarForGallery.images || []).filter(img => img !== imageUrl);
+    let newMain = selectedCarForGallery.mainImage;
+    if (newMain === imageUrl) {
+      newMain = updatedImages[0] || 'https://images.unsplash.com/photo-1609521263047-f8f205293f24?auto=format&fit=crop&q=80&w=1200';
+    }
+    
+    const updatedCar = {
+      ...selectedCarForGallery,
+      images: updatedImages,
+      mainImage: newMain,
+      colors: selectedCarForGallery.colors.map((c, i) => i === 0 ? { ...c, imageUrl: newMain } : c)
+    };
+    
+    setSelectedCarForGallery(updatedCar);
+    const updatedCars = cars.map(c => c.id === selectedCarForGallery.id ? updatedCar : c);
+    onUpdateCars(updatedCars);
+  };
+
+  // Edit Car Modal Handlers
+  const handleSaveEditedCar = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingCar) return;
+    if (!editingCar.make || !editingCar.model) {
+      alert("Please provide vehicle make and model.");
+      return;
+    }
+    const updated = cars.map(c => c.id === editingCar.id ? editingCar : c);
+    onUpdateCars(updated);
+    setEditingCar(null);
+  };
+
+  const handleAddTrimToEditingCar = () => {
+    if (!editingCar || !editTrimName.trim()) return;
+    const newTrim: TrimLevel = {
+      id: `trim-${Date.now()}`,
+      name: editTrimName.trim(),
+      price: editTrimPrice,
+      engine: editingCar.performance?.engine || 'Engine Standard',
+      horsepower: editTrimHP,
+      acceleration: editingCar.performance?.acceleration || '3.2s',
+      topSpeed: editingCar.performance?.topSpeed || '205 mph'
+    };
+    setEditingCar({
+      ...editingCar,
+      trims: [...(editingCar.trims || []), newTrim]
+    });
+    setEditTrimName('');
+  };
+
+  const handleRemoveTrimFromEditingCar = (trimId: string) => {
+    if (!editingCar) return;
+    setEditingCar({
+      ...editingCar,
+      trims: editingCar.trims.filter(t => t.id !== trimId)
+    });
+  };
+
+  const handleAddColorToEditingCar = () => {
+    if (!editingCar || !editColorName.trim()) return;
+    const newColor: ColorOption = {
+      name: editColorName.trim(),
+      hex: editColorHex,
+      imageUrl: editingCar.mainImage
+    };
+    setEditingCar({
+      ...editingCar,
+      colors: [...(editingCar.colors || []), newColor]
+    });
+    setEditColorName('');
+  };
+
+  const handleRemoveColorFromEditingCar = (colorName: string) => {
+    if (!editingCar) return;
+    setEditingCar({
+      ...editingCar,
+      colors: editingCar.colors.filter(c => c.name !== colorName)
+    });
   };
 
   // Add trim option to new car builder
@@ -807,7 +940,7 @@ export default function AdminPanel({ cars, onUpdateCars, onClose, onResetDatabas
                       <th className="px-6 py-4 text-[9px] uppercase tracking-widest font-black">Horsepower</th>
                       <th className="px-6 py-4 text-[9px] uppercase tracking-widest font-black">Starting Base MSRP</th>
                       <th className="px-6 py-4 text-[9px] uppercase tracking-widest font-black text-center">Catalog Showcase Status</th>
-                      <th className="px-6 py-4 text-[9px] uppercase tracking-widest font-black text-right">Delete Line</th>
+                      <th className="px-6 py-4 text-[9px] uppercase tracking-widest font-black text-right">Administrative Controls</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-900 bg-zinc-950/20">
@@ -843,8 +976,18 @@ export default function AdminPanel({ cars, onUpdateCars, onClose, onResetDatabas
                             </div>
                             <div>
                               <span className="font-bold text-white block leading-tight font-serif italic text-sm">{car.make} {car.model}</span>
-                              <div className="flex items-center gap-2 mt-1">
-                                <span className="text-[9px] text-zinc-500 uppercase tracking-wider">{car.year} Year / {car.category}</span>
+                              <div className="flex items-center gap-2 mt-1 flex-wrap">
+                                <span className="text-[9px] text-zinc-550 uppercase tracking-wider">{car.year} / {car.category}</span>
+                                <span className="text-zinc-800 font-bold">//</span>
+                                <button
+                                  onClick={() => setSelectedCarForGallery(car)}
+                                  className="text-[8.5px] font-mono text-red-400 hover:text-red-300 cursor-pointer hover:underline uppercase tracking-widest font-black flex items-center gap-1 bg-red-950/20 border border-red-900/30 px-1.5 py-0.5 rounded-sm active:scale-95 transition-transform"
+                                  title="Add and edit alternative gallery photos"
+                                >
+                                  <Image className="w-2.5 h-2.5 text-red-500" />
+                                  <span>Gallery ({car.images?.length || 0})</span>
+                                </button>
+                                <span className="text-zinc-800 font-bold">//</span>
                                 <span 
                                   onClick={() => {
                                     const newUrl = prompt("Paste new picture URL link for this car:", car.mainImage);
@@ -852,7 +995,7 @@ export default function AdminPanel({ cars, onUpdateCars, onClose, onResetDatabas
                                       handleImageUploadForCar(car.id, newUrl.trim());
                                     }
                                   }}
-                                  className="text-[8.5px] font-mono text-[#8B0000] hover:text-white cursor-pointer hover:underline uppercase tracking-widest font-black"
+                                  className="text-[8.5px] font-mono text-zinc-400 hover:text-white cursor-pointer hover:underline uppercase tracking-widest font-black"
                                   title="Manually paste a picture web link for this car"
                                 >
                                   [ LINK ]
@@ -900,13 +1043,23 @@ export default function AdminPanel({ cars, onUpdateCars, onClose, onResetDatabas
                         </td>
 
                         <td className="px-6 py-4 text-right">
-                          <button
-                            onClick={() => handleDeleteCar(car.id)}
-                            className="text-zinc-600 hover:text-[#8B0000] transition-colors p-1.5 rounded-sm hover:bg-black/40"
-                            title="Delete car record"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                          <div className="flex justify-end items-center gap-2">
+                            <button
+                              onClick={() => setEditingCar({ ...car })}
+                              className="text-zinc-400 hover:text-white border border-zinc-900 bg-zinc-950 p-1.5 rounded-sm hover:border-[#8B0000] cursor-pointer transition-colors"
+                              title="Edit all fields and metadata"
+                            >
+                              <Edit className="w-3.5 h-3.5" />
+                            </button>
+                            <span className="text-zinc-800 font-bold">//</span>
+                            <button
+                              onClick={() => handleDeleteCar(car.id)}
+                              className="text-zinc-600 hover:text-[#8B0000] border border-zinc-900 bg-zinc-950 p-1.5 rounded-sm hover:border-[#8B0000] cursor-pointer transition-colors"
+                              title="Delete car record"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -917,6 +1070,681 @@ export default function AdminPanel({ cars, onUpdateCars, onClose, onResetDatabas
           </div>
         )}
       </main>
+
+      {/* RENDER THE INTERACTIVE PHOTO GALLERY MODAL */}
+      <AnimatePresence>
+        {selectedCarForGallery && (
+          <div 
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95 backdrop-blur-sm overflow-y-auto"
+            onClick={() => setSelectedCarForGallery(null)}
+          >
+            <motion.div 
+              initial={{ scale: 0.96, opacity: 0, y: 15 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.96, opacity: 0, y: 15 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-4xl bg-[#0a0a0a] border border-zinc-900 rounded-sm p-6 sm:p-8 shadow-[0_25px_60px_rgba(0,0,0,0.95)] max-h-[90vh] overflow-y-auto custom-scrollbar flex flex-col gap-6 font-sans text-neutral-200"
+            >
+              {/* Header */}
+              <div className="flex justify-between items-center border-b border-zinc-900 pb-4">
+                <div>
+                  <span className="text-[10px] font-mono tracking-[0.25em] text-[#8B0000] uppercase font-black">
+                    VEHICLE IMAGERY OVERRIDE // CONFIG: {selectedCarForGallery.id.toUpperCase()}
+                  </span>
+                  <h3 className="text-xl sm:text-2xl font-serif italic text-white font-black mt-1">
+                    {selectedCarForGallery.make} <span className="text-[#8B0000]">{selectedCarForGallery.model}</span> Gallery
+                  </h3>
+                </div>
+                <button 
+                  onClick={() => setSelectedCarForGallery(null)}
+                  className="w-9 h-9 bg-black border border-zinc-900 hover:border-[#8B0000] text-zinc-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Add New Photo Block */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-[#0e0e0e] border border-zinc-900 p-5 rounded-sm">
+                <div>
+                  <h4 className="text-[9px] font-mono tracking-widest text-[#8B0000] uppercase font-black mb-3.5">
+                    1. Upload Device Photo
+                  </h4>
+                  <label className="flex flex-col items-center justify-center border border-dashed border-zinc-800 hover:border-red-500/50 bg-black/70 p-6 rounded-sm cursor-pointer transition-all hover:bg-red-950/5 group text-center">
+                    <Upload className="w-6 h-6 text-zinc-500 group-hover:text-red-500 transition-colors mb-2" />
+                    <span className="text-[10px] font-mono font-bold text-zinc-400 group-hover:text-white uppercase tracking-wider">Select Device Image File</span>
+                    <span className="text-[8px] font-mono text-zinc-650 uppercase mt-1 text-zinc-500">Syncs as Base64 link</span>
+                    <input 
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            handleAddImageToGallery(reader.result as string);
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+                  </label>
+                </div>
+
+                <div className="flex flex-col justify-between">
+                  <div>
+                    <h4 className="text-[9px] font-mono tracking-widest text-[#8B0000] uppercase font-black mb-3.5">
+                      2. Add via Image Web Link
+                    </h4>
+                    <div className="flex gap-2">
+                      <input 
+                        type="text"
+                        value={galleryUrlInput}
+                        onChange={(e) => setGalleryUrlInput(e.target.value)}
+                        placeholder="Paste image URL (e.g. https://...)"
+                        className="flex-grow bg-black border border-zinc-850 p-2.5 text-xs text-zinc-300 focus:border-[#8B0000] focus:outline-none rounded-sm font-mono tracking-tight"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (galleryUrlInput.trim()) {
+                            handleAddImageToGallery(galleryUrlInput.trim());
+                            setGalleryUrlInput('');
+                          }
+                        }}
+                        className="bg-[#8B0000] hover:bg-[#8B0000]/80 text-white text-[9.5px] font-mono tracking-wider font-extrabold px-3 uppercase cursor-pointer transition-colors"
+                      >
+                        Add URL
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Stock Photos Presets */}
+                  <div className="mt-4 pt-4 border-t border-zinc-900/40">
+                    <span className="text-[8px] font-mono text-zinc-550 uppercase tracking-widest block mb-2 font-bold">
+                      💡 Preset Luxury Stock Backdrops
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {[
+                        { name: 'Ferrari Red', url: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=1200' },
+                        { name: 'Porsche Silver', url: 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&q=80&w=1200' },
+                        { name: 'Aston Green', url: 'https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&q=80&w=1200' },
+                        { name: 'Bugatti Blue', url: 'https://images.unsplash.com/photo-1600705722908-bab1e61c0b4d?auto=format&fit=crop&q=80&w=1200' }
+                      ].map((item) => (
+                        <button
+                          key={item.name}
+                          type="button"
+                          onClick={() => handleAddImageToGallery(item.url)}
+                          className="bg-black border border-zinc-850 hover:border-[#8B0000] text-zinc-400 hover:text-white px-2 py-1 text-[8.5px] font-mono uppercase rounded-sm transition-all cursor-pointer"
+                        >
+                          {item.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Gallery Grid Display */}
+              <div>
+                <span className="text-[9px] font-mono tracking-widest text-zinc-500 uppercase block mb-3 font-bold">
+                  Active Gallery Photos ({selectedCarForGallery.images?.length || 0})
+                </span>
+                
+                {selectedCarForGallery.images && selectedCarForGallery.images.length > 0 ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    {selectedCarForGallery.images.map((img, idx) => {
+                      const isMain = selectedCarForGallery.mainImage === img;
+                      return (
+                        <div 
+                          key={idx} 
+                          className={`relative group h-28 sm:h-32 rounded-sm bg-black border overflow-hidden flex flex-col justify-between transition-all duration-300 ${
+                            isMain ? 'border-[#8B0000] shadow-[0_0_15px_rgba(139,0,0,0.25)]' : 'border-zinc-900 hover:border-zinc-700'
+                          }`}
+                        >
+                          {/* Image */}
+                          <img 
+                            src={img} 
+                            alt={`Gallery asset ${idx}`} 
+                            className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                            referrerPolicy="no-referrer"
+                          />
+
+                          {/* Hover Overlay Controls */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-between p-2">
+                            {/* Top row actions (Delete) */}
+                            <div className="flex justify-end">
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveImageFromGallery(img)}
+                                className="w-6 h-6 bg-black/80 border border-zinc-800 hover:border-[#8B0000]/60 hover:text-[#8B0000] text-zinc-400 flex items-center justify-center rounded-sm cursor-pointer transition-colors"
+                                title="Delete photo from gallery"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </button>
+                            </div>
+
+                            {/* Bottom row actions (Set as Main) */}
+                            <div>
+                              {!isMain ? (
+                                <button
+                                  type="button"
+                                  onClick={() => handleMakeMainImage(img)}
+                                  className="w-full bg-black/90 hover:bg-[#8B0000] text-white border border-zinc-800 hover:border-[#8B0000] uppercase text-[7.5px] font-mono font-black py-1 px-1.5 transition-colors cursor-pointer rounded-sm"
+                                >
+                                  SET MAIN COVER
+                                </button>
+                              ) : (
+                                <span className="block text-center text-[#8B0000] bg-black/90 font-mono text-[7.5px] font-black py-1 rounded-sm border border-[#8B0000]/30 select-none tracking-widest">
+                                  PRIMARY SPEC
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Normal non-hover Badge indicators */}
+                          {!isMain ? (
+                            <div className="absolute left-2 top-2 bg-black/60 px-1.5 py-0.5 border border-zinc-850 rounded-[2px] pointer-events-none group-hover:opacity-0 transition-opacity">
+                              <span className="text-[7px] text-zinc-400 font-mono font-bold">ALT VIEW</span>
+                            </div>
+                          ) : (
+                            <div className="absolute left-2 top-2 bg-[#8B0000]/95 px-1.5 py-0.5 border border-red-500/30 rounded-[2px] pointer-events-none group-hover:opacity-0 transition-opacity">
+                              <span className="text-[7.5px] text-white font-mono font-black tracking-widest">PRIMARY</span>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="text-center p-10 bg-[#070707] border border-zinc-900 rounded-sm">
+                    <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest font-black">
+                      No gallery assets uploaded for this model yet. Add photos above.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Close Button Footer */}
+              <div className="border-t border-zinc-900 pt-5 flex justify-between items-center text-[9px] font-mono text-zinc-500 uppercase">
+                <span>All modifications instantly sync with the Master Registry</span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedCarForGallery(null)}
+                  className="bg-zinc-950 hover:bg-zinc-900 border border-zinc-850 hover:border-zinc-650 text-zinc-300 font-mono text-[10px] font-black py-2.5 px-6 rounded-sm uppercase tracking-widest cursor-pointer transition-colors"
+                >
+                  Close Gallery Override
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* RENDER THE INTERACTIVE EDIT CAR MODAL */}
+      <AnimatePresence>
+        {editingCar && (
+          <div 
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95 backdrop-blur-sm overflow-y-auto"
+            onClick={() => setEditingCar(null)}
+          >
+            <motion.div 
+              initial={{ scale: 0.96, opacity: 0, y: 15 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.96, opacity: 0, y: 15 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-4xl bg-[#0a0a0a] border border-zinc-900 rounded-sm p-6 sm:p-8 shadow-[0_25px_60px_rgba(0,0,0,0.95)] max-h-[90vh] overflow-y-auto custom-scrollbar flex flex-col gap-6 font-sans text-neutral-200"
+            >
+              {/* Header */}
+              <div className="flex justify-between items-center border-b border-zinc-900 pb-4">
+                <div>
+                  <span className="text-[10px] font-mono tracking-[0.25em] text-[#8B0000] uppercase font-black">
+                    VEHICLE OVERRIDE CONSOLE // ID: {editingCar.id.toUpperCase()}
+                  </span>
+                  <h3 className="text-xl sm:text-2xl font-serif italic text-white font-black mt-1">
+                    Edit {editingCar.make} <span className="text-[#8B0000]">{editingCar.model}</span> Specs
+                  </h3>
+                </div>
+                <button 
+                  onClick={() => setEditingCar(null)}
+                  className="w-9 h-9 bg-black border border-zinc-900 hover:border-[#8B0000] text-zinc-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <form onSubmit={handleSaveEditedCar} className="space-y-6">
+                {/* General Info */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div>
+                    <label className="text-[9px] font-mono uppercase tracking-widest text-zinc-500 font-bold block mb-2">Make *</label>
+                    <input
+                      type="text"
+                      required
+                      value={editingCar.make}
+                      onChange={(e) => setEditingCar({ ...editingCar, make: e.target.value })}
+                      className="w-full bg-black border border-zinc-900 focus:border-[#8B0000] text-xs text-white p-3 focus:outline-none rounded-sm uppercase tracking-wider"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[9px] font-mono uppercase tracking-widest text-zinc-500 font-bold block mb-2">Model *</label>
+                    <input
+                      type="text"
+                      required
+                      value={editingCar.model}
+                      onChange={(e) => setEditingCar({ ...editingCar, model: e.target.value })}
+                      className="w-full bg-black border border-zinc-900 focus:border-[#8B0000] text-xs text-white p-3 focus:outline-none rounded-sm uppercase tracking-wider"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                  <div>
+                    <label className="text-[9px] font-mono uppercase tracking-widest text-zinc-500 font-bold block mb-2">Production Year</label>
+                    <input
+                      type="number"
+                      value={editingCar.year}
+                      onChange={(e) => setEditingCar({ ...editingCar, year: parseInt(e.target.value) || 2026 })}
+                      className="w-full bg-black border border-zinc-900 focus:border-[#8B0000] text-xs text-white p-3 focus:outline-none rounded-sm font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[9px] font-mono uppercase tracking-widest text-zinc-500 font-bold block mb-2">Base Cost Amount (₦)</label>
+                    <input
+                      type="number"
+                      value={editingCar.startingPrice}
+                      onChange={(e) => setEditingCar({ ...editingCar, startingPrice: parseInt(e.target.value) || 0 })}
+                      className="w-full bg-black border border-zinc-900 focus:border-[#8B0000] text-xs p-3 focus:outline-none rounded-sm font-mono text-[#8B0000] font-black"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[9px] font-mono uppercase tracking-widest text-zinc-500 font-bold block mb-2">Power Source Configuration</label>
+                    <select
+                      value={editingCar.engineType}
+                      onChange={(e) => setEditingCar({ ...editingCar, engineType: e.target.value })}
+                      className="w-full bg-black border border-zinc-900 focus:border-[#8B0000] text-xs text-zinc-300 p-3 focus:outline-none rounded-sm uppercase tracking-widest cursor-pointer"
+                    >
+                      <option value="Nuclear Fusion">Nuclear Fusion</option>
+                      <option value="Hydrogen Hybrid">Hydrogen Hybrid</option>
+                      <option value="Tesla Ion Drive">Tesla Ion Drive</option>
+                      <option value="Bi-Turbo Plasma">Bi-Turbo Plasma</option>
+                      <option value="Quantum Overdrive">Quantum Overdrive</option>
+                      <option value="Electric">Electric</option>
+                      <option value="Gasoline">Gasoline</option>
+                      <option value="Fuel">Fuel</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div>
+                    <label className="text-[9px] font-mono uppercase tracking-widest text-zinc-500 font-bold block mb-2">Product Category</label>
+                    <select
+                      value={editingCar.category}
+                      onChange={(e) => setEditingCar({ ...editingCar, category: e.target.value })}
+                      className="w-full bg-black border border-zinc-900 focus:border-[#8B0000] text-xs text-zinc-300 p-3 focus:outline-none rounded-sm uppercase tracking-widest cursor-pointer mb-4"
+                    >
+                      <option value="Interstellar GT">Interstellar GT</option>
+                      <option value="Martian Cruiser">Martian Cruiser</option>
+                      <option value="Lunar Outlaw">Lunar Outlaw</option>
+                      <option value="Deep-Space Utility">Deep-Space Utility</option>
+                    </select>
+
+                    <div className="border border-zinc-900 bg-black/40 p-4 rounded-sm space-y-3">
+                      <span className="text-[8px] font-mono uppercase tracking-widest text-[#8B0000] font-black block">REPLACE PRIMARY SPEC IMAGE</span>
+                      <p className="text-[9px] text-zinc-400 leading-relaxed uppercase">Select image from device to write as the primary layout cover.</p>
+                      <label className="flex flex-col items-center justify-center border border-dashed border-zinc-850 hover:border-[#8B0000] bg-black/70 p-4 rounded-sm cursor-pointer transition-all hover:bg-[#8B0000]/5 group">
+                        <div className="flex flex-col items-center gap-2">
+                          <Upload className="w-5 h-5 text-zinc-500 group-hover:text-[#8B0000] transition-colors" />
+                          <span className="text-[9px] font-mono text-zinc-400 group-hover:text-white uppercase font-bold tracking-wider">Select Device Image</span>
+                        </div>
+                        <input 
+                          type="file" 
+                          accept="image/*"
+                          className="hidden" 
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onloadend = () => {
+                                const base64String = reader.result as string;
+                                const updatedImages = [...(editingCar.images || [])];
+                                if (!updatedImages.includes(base64String)) {
+                                  updatedImages.unshift(base64String);
+                                }
+                                setEditingCar({
+                                  ...editingCar,
+                                  mainImage: base64String,
+                                  images: updatedImages,
+                                  colors: editingCar.colors.map((c, i) => i === 0 ? { ...c, imageUrl: base64String } : c)
+                                });
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                        />
+                      </label>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-[9px] font-mono uppercase tracking-widest text-zinc-500 font-bold block mb-2">Display Cover Image URL</label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={editingCar.mainImage}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          const updatedImages = [...(editingCar.images || [])];
+                          if (val && !updatedImages.includes(val)) {
+                            updatedImages.unshift(val);
+                          }
+                          setEditingCar({
+                            ...editingCar,
+                            mainImage: val,
+                            images: updatedImages,
+                            colors: editingCar.colors.map((c, i) => i === 0 ? { ...c, imageUrl: val } : c)
+                          });
+                        }}
+                        className="w-full bg-black border border-zinc-900 focus:border-[#8B0000] text-xs text-zinc-300 p-3 pr-10 focus:outline-none rounded-sm font-mono tracking-tighter truncate"
+                        placeholder="Paste image URL..."
+                      />
+                      <Image className="w-4 h-4 text-zinc-700 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
+
+                    <div className="mt-4 border border-zinc-900 p-3 rounded-sm bg-black/50">
+                      <span className="text-[8px] font-mono uppercase tracking-widest text-zinc-500 block mb-2">Live Cover Preview</span>
+                      <div className="h-28 w-full bg-[#030303] flex items-center justify-center rounded-sm overflow-hidden border border-zinc-950 relative">
+                        {editingCar.mainImage ? (
+                          <img 
+                            src={editingCar.mainImage} 
+                            alt="Preview" 
+                            className="w-full h-full object-cover"
+                            referrerPolicy="no-referrer"
+                          />
+                        ) : (
+                          <span className="text-[9px] font-mono text-zinc-650 uppercase">No Cover Loaded</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Technical performance specifications */}
+                <div className="bg-black border border-zinc-900 p-5 space-y-4 rounded-sm">
+                  <span className="text-[9.5px] font-mono uppercase tracking-widest text-[#8B0000] font-black block">
+                    Engineering Specs Matrix
+                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                      <label className="text-[9px] font-mono uppercase text-zinc-550 block mb-1">Engine Unit description</label>
+                      <input
+                        type="text"
+                        value={editingCar.performance.engine}
+                        onChange={(e) => setEditingCar({
+                          ...editingCar,
+                          performance: { ...editingCar.performance, engine: e.target.value }
+                        })}
+                        className="w-full bg-zinc-950 border border-zinc-900 p-2 text-xs text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[9px] font-mono uppercase text-zinc-550 block mb-1">Total Horsepower</label>
+                      <input
+                        type="number"
+                        value={editingCar.performance.horsepower}
+                        onChange={(e) => setEditingCar({
+                          ...editingCar,
+                          performance: { ...editingCar.performance, horsepower: parseInt(e.target.value) || 0 }
+                        })}
+                        className="w-full bg-zinc-950 border border-zinc-900 p-2 text-xs text-white font-mono"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[9px] font-mono uppercase text-[#8B0000] block mb-1">Acceleration (0-60)</label>
+                      <input
+                        type="text"
+                        value={editingCar.performance.acceleration}
+                        onChange={(e) => setEditingCar({
+                          ...editingCar,
+                          performance: { ...editingCar.performance, acceleration: e.target.value }
+                        })}
+                        className="w-full bg-zinc-950 border border-zinc-900 p-2 text-xs text-white font-mono"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                      <label className="text-[9px] font-mono uppercase text-zinc-550 block mb-1">Top Speed (MPH)</label>
+                      <input
+                        type="text"
+                        value={editingCar.performance.topSpeed}
+                        onChange={(e) => setEditingCar({
+                          ...editingCar,
+                          performance: { ...editingCar.performance, topSpeed: e.target.value }
+                        })}
+                        className="w-full bg-zinc-950 border border-zinc-900 p-2 text-xs text-white font-mono"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[9px] font-mono uppercase text-zinc-550 block mb-1">Drivetrain Configuration</label>
+                      <input
+                        type="text"
+                        value={editingCar.performance.drivetrain}
+                        onChange={(e) => setEditingCar({
+                          ...editingCar,
+                          performance: { ...editingCar.performance, drivetrain: e.target.value }
+                        })}
+                        className="w-full bg-zinc-950 border border-zinc-900 p-2 text-xs text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[9px] font-mono uppercase text-zinc-550 block mb-1">Fuel / Energy Capacity</label>
+                      <input
+                        type="text"
+                        value={editingCar.performance.fuelCapacity || ''}
+                        onChange={(e) => setEditingCar({
+                          ...editingCar,
+                          performance: { ...editingCar.performance, fuelCapacity: e.target.value }
+                        })}
+                        className="w-full bg-zinc-950 border border-zinc-900 p-2 text-xs text-white font-mono"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Colors Management Panel */}
+                <div className="bg-black border border-zinc-900 p-5 space-y-4 rounded-sm">
+                  <span className="text-[9.5px] font-mono uppercase tracking-widest text-[#8B0000] font-black block">
+                    Paint Finishes & Color Schemes ({editingCar.colors?.length || 0})
+                  </span>
+                  
+                  <div className="flex flex-col sm:flex-row gap-3 border-b border-zinc-900/60 pb-4 items-end">
+                    <div className="flex-grow">
+                      <label className="text-[9px] font-mono uppercase text-zinc-500 block mb-1">Color Name</label>
+                      <input
+                        type="text"
+                        value={editColorName}
+                        onChange={(e) => setEditColorName(e.target.value)}
+                        placeholder="e.g. Aventador Gold"
+                        className="w-full bg-zinc-950 border border-zinc-900 p-2 text-xs text-white"
+                      />
+                    </div>
+                    <div className="w-full sm:w-28">
+                      <label className="text-[9px] font-mono uppercase text-zinc-500 block mb-1">Hex Color Code</label>
+                      <div className="flex gap-2">
+                        <input
+                          type="color"
+                          value={editColorHex}
+                          onChange={(e) => setEditColorHex(e.target.value)}
+                          className="w-9 h-8 bg-black border border-zinc-900 rounded-sm cursor-pointer"
+                        />
+                        <input
+                          type="text"
+                          value={editColorHex}
+                          onChange={(e) => setEditColorHex(e.target.value)}
+                          placeholder="#000000"
+                          className="w-full bg-zinc-950 border border-zinc-900 p-1 text-center text-xs text-white font-mono uppercase"
+                        />
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleAddColorToEditingCar}
+                      disabled={!editColorName.trim()}
+                      className="bg-zinc-900 border border-zinc-850 hover:bg-zinc-850 text-zinc-300 font-mono text-[9px] px-4 py-2.5 uppercase tracking-wider h-9 cursor-pointer active:scale-95 transition-all text-center disabled:opacity-40"
+                    >
+                      + ADD COLOR
+                    </button>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    {editingCar.colors?.map((c, idx) => (
+                      <div 
+                        key={idx} 
+                        className="flex items-center gap-2 bg-[#0c0c0c] border border-zinc-900 rounded-sm py-1.5 px-2.5 text-xs text-zinc-300"
+                      >
+                        <span 
+                          className="w-3.5 h-3.5 border border-black rounded-full" 
+                          style={{ backgroundColor: c.hex }} 
+                        />
+                        <span className="font-mono text-[10.5px] uppercase font-bold">{c.name}</span>
+                        <span className="text-zinc-600 font-mono text-[9px]">{c.hex}</span>
+                        {editingCar.colors.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveColorFromEditingCar(c.name)}
+                            className="text-zinc-500 hover:text-[#8B0000] cursor-pointer pl-1.5 border-l border-zinc-900"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Trims Management Panel */}
+                <div className="bg-black border border-zinc-900 p-5 space-y-4 rounded-sm">
+                  <span className="text-[9.5px] font-mono uppercase tracking-widest text-[#8B0000] font-black block">
+                    Trim Grade Configurations ({editingCar.trims?.length || 0})
+                  </span>
+
+                  <div className="flex flex-col sm:flex-row gap-3 border-b border-zinc-900/60 pb-4 items-end">
+                    <div className="flex-grow">
+                      <label className="text-[9px] font-mono uppercase text-zinc-500 block mb-1">Trim Level Name</label>
+                      <input
+                        type="text"
+                        value={editTrimName}
+                        onChange={(e) => setEditTrimName(e.target.value)}
+                        placeholder="e.g. Dynamic GTS, Premium S"
+                        className="w-full bg-zinc-950 border border-zinc-900 p-2 text-xs text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[9px] font-mono uppercase text-zinc-500 block mb-1">Trim Cost (₦)</label>
+                      <input
+                        type="number"
+                        value={editTrimPrice}
+                        onChange={(e) => setEditTrimPrice(parseInt(e.target.value) || 0)}
+                        className="w-full bg-zinc-950 border border-zinc-900 p-2 text-xs text-white font-mono"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[9px] font-mono uppercase text-zinc-500 block mb-1">Hp Output</label>
+                      <input
+                        type="number"
+                        value={editTrimHP}
+                        onChange={(e) => setEditTrimHP(parseInt(e.target.value) || 0)}
+                        className="w-full bg-zinc-950 border border-zinc-900 p-2 text-xs text-white font-mono"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleAddTrimToEditingCar}
+                      disabled={!editTrimName.trim()}
+                      className="bg-zinc-900 border border-zinc-850 hover:bg-zinc-850 text-zinc-300 font-mono text-[9px] px-4 py-2.5 uppercase tracking-wider h-9 cursor-pointer active:scale-95 transition-all text-center disabled:opacity-40"
+                    >
+                      + ADD TRIM
+                    </button>
+                  </div>
+
+                  <div className="space-y-2">
+                    {editingCar.trims?.map((t, idx) => (
+                      <div 
+                        key={idx} 
+                        className="flex justify-between items-center bg-[#070707] p-2.5 text-xs rounded-sm border border-zinc-900"
+                      >
+                        <span className="font-bold text-zinc-300 font-mono text-[11px] uppercase tracking-wider">
+                          {t.name}
+                        </span>
+                        <div className="flex items-center gap-4">
+                          <span className="text-[#8B0000] font-mono font-black">₦{t.price.toLocaleString()}</span>
+                          <span className="text-zinc-500 font-mono text-[10px]">{t.horsepower} HP</span>
+                          {editingCar.trims.length > 1 && (
+                            <button 
+                              type="button" 
+                              onClick={() => handleRemoveTrimFromEditingCar(t.id)}
+                              className="text-zinc-600 hover:text-[#8B0000] cursor-pointer"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Bio text info */}
+                <div>
+                  <label className="text-[9px] font-mono uppercase tracking-widest text-zinc-500 font-bold block mb-2">Description / Philosophy Summary</label>
+                  <textarea
+                    value={editingCar.description}
+                    onChange={(e) => setEditingCar({ ...editingCar, description: e.target.value })}
+                    rows={3}
+                    className="w-full bg-black border border-[#111] focus:border-[#8B0000] text-xs text-white p-3 focus:outline-none rounded-sm uppercase tracking-wider leading-relaxed"
+                  />
+                </div>
+
+                {/* Visibility Status */}
+                <div className="flex items-center gap-4 py-2 border-t border-zinc-900/60">
+                  <button
+                    type="button"
+                    onClick={() => setEditingCar({ ...editingCar, isPublic: !editingCar.isPublic })}
+                    className="flex items-center gap-2.5 text-[10px] font-mono uppercase text-zinc-300 font-bold tracking-wider cursor-pointer"
+                  >
+                    {editingCar.isPublic ? (
+                      <ToggleRight className="w-6 h-6 text-[#8B0000]" />
+                    ) : (
+                      <ToggleLeft className="w-6 h-6 text-zinc-700" />
+                    )}
+                    <span>Directly publish this vehicle model on the public catalog</span>
+                  </button>
+                </div>
+
+                {/* Footer buttons row */}
+                <div className="pt-6 flex gap-3 border-t border-zinc-900">
+                  <button
+                    type="submit"
+                    className="bg-[#8B0000] hover:bg-[#8B0000]/85 text-white font-mono text-[10px] font-black py-3.5 px-8 rounded-sm tracking-widest uppercase cursor-pointer"
+                  >
+                    Commit Updated Package
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditingCar(null)}
+                    className="bg-black hover:bg-zinc-950 border border-zinc-900 text-zinc-400 font-mono text-[10px] py-3.5 px-8 rounded-sm uppercase tracking-widest cursor-pointer"
+                  >
+                    Discard Changes
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

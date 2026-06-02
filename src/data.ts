@@ -7,38 +7,44 @@ export const INITIAL_CARS: Car[] = [
     model: 'Chronos GT-V',
     year: 2026,
     startingPrice: 48000000,
-    engineType: 'Tesla Ion Drive',
-    category: 'Interstellar GT',
-    description: 'An ultra-luxury high-altitude grand tourer engineered to glide effortlessly over planetary landscapes. Features carbon-titanium body panels, biometric cockpit interfaces, and a magnetic suspension tuned for extreme terrain comfort.',
+    engineType: 'Multi-motor Electric AWD',
+    category: 'Grand Tourer (GT)',
+    description: 'An ultra-luxury grand tourer engineered to glide effortlessly over long distances. Features premium carbon-titanium body panels, hand-stitched leather interiors, and an adaptive active suspension tuned for supreme high-speed comfort.',
     performance: {
       acceleration: '1.9s',
       horsepower: 1200,
       topSpeed: '250 mph',
-      engine: 'Tesla Quad-Phase Ion Reactor',
+      engine: 'High-Power Electric Drive Unit',
       drivetrain: 'Vector-Stabilized Active AWD',
       fuelCapacity: '95 Liters'
     },
-    mainImage: 'https://images.unsplash.com/photo-1609521263047-f8f205293f24?auto=format&fit=crop&q=80&w=1200',
+    mainImage: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=1200',
     images: [
-      'https://images.unsplash.com/photo-1609521263047-f8f205293f24?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?auto=format&fit=crop&q=80&w=1200',
-      'https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&q=80&w=1200'
+      'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=1200',
+      'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1200',
+      'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=1200',
+      'https://images.unsplash.com/photo-1621135802920-133df287f89c?auto=format&fit=crop&q=80&w=1200'
     ],
     colors: [
       {
-        name: 'Crimson Plasma Red',
+        name: 'Sport Red',
         hex: '#8B0000',
-        imageUrl: 'https://images.unsplash.com/photo-1609521263047-f8f205293f24?auto=format&fit=crop&q=80&w=1200'
+        imageUrl: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=1200'
       },
       {
-        name: 'Meteor Charcoal (Matte)',
-        hex: '#1C1C1C',
-        imageUrl: 'https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?auto=format&fit=crop&q=80&w=1200'
+        name: 'Deep Black',
+        hex: '#111111',
+        imageUrl: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1200'
       },
       {
-        name: 'Stardust Bronze Satin',
-        hex: '#4A3E2A',
-        imageUrl: 'https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&q=80&w=1200'
+        name: 'British Green',
+        hex: '#004225',
+        imageUrl: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=1200'
+      },
+      {
+        name: 'Satin Brown',
+        hex: '#5D4037',
+        imageUrl: 'https://images.unsplash.com/photo-1621135802920-133df287f89c?auto=format&fit=crop&q=80&w=1200'
       }
     ],
     trims: [
@@ -46,16 +52,16 @@ export const INITIAL_CARS: Car[] = [
         id: 'chronos-base',
         name: 'Standard Excursion Spec',
         price: 48000000,
-        engine: 'Tesla Quad-Phase Ion Reactor',
+        engine: 'High-Power Electric Drive Unit',
         horsepower: 1200,
         acceleration: '1.9s',
         topSpeed: '250 mph'
       },
       {
         id: 'chronos-speedway',
-        name: 'Speedway Horizon Package (Gravity Aero)',
+        name: 'Horizon Performance Package',
         price: 54500000,
-        engine: 'Tesla Overclocked Quad-Phase Ion Reactor',
+        engine: 'Overclocked Electric Drive Unit',
         horsepower: 1350,
         acceleration: '1.75s',
         topSpeed: '265 mph'
@@ -69,15 +75,15 @@ export const INITIAL_CARS: Car[] = [
     model: 'Atlas Expedition 6x6',
     year: 2026,
     startingPrice: 125000000,
-    engineType: 'Nuclear Fusion',
-    category: 'Martian Cruiser',
-    description: 'The ultimate planetary flagship. A powerhouse heavy cruiser fitted with custom micro-atmosphere generators, independent active vector cooling on all six tracks, and a luxurious oak-and-titanium command desk.',
+    engineType: 'Twin-Turbo V8',
+    category: 'Offroad 6x6',
+    description: 'The ultimate luxury off-road flagship. A powerhouse heavy cruiser fitted with a high-torque twin-turbocharged V8 engine, active electronic diff-locks on all three axles, and a custom handcrafted wood-and-leather luxury command cabin.',
     performance: {
       acceleration: '2.8s',
       horsepower: 2400,
       topSpeed: '190 mph',
-      engine: 'Miniature Tokamak Fusion Engine',
-      drivetrain: '6x6 Continuous Planetary Traction',
+      engine: '4.4L Twin-Turbocharged V8',
+      drivetrain: '6x6 Deep-Traction Continuous AWD',
       fuelCapacity: '150 Liters'
     },
     mainImage: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=1200',
@@ -103,16 +109,16 @@ export const INITIAL_CARS: Car[] = [
         id: 'atlas-expedition',
         name: 'Base Expedition Spec',
         price: 125000000,
-        engine: 'Miniature Tokamak Fusion Core',
+        engine: '4.4L Twin-Turbocharged V8',
         horsepower: 2400,
         acceleration: '2.8s',
         topSpeed: '190 mph'
       },
       {
         id: 'atlas-command-fortress',
-        name: 'Command Fortress (Atmosphere Generator)',
+        name: 'Command Fortress Luxe',
         price: 148000000,
-        engine: 'Dual-Core Tokamak Fusion Matrix',
+        engine: 'Supercharged 5.0L V8 Special Response',
         horsepower: 2800,
         acceleration: '2.5s',
         topSpeed: '200 mph'
@@ -123,17 +129,17 @@ export const INITIAL_CARS: Car[] = [
   {
     id: 'autoaventus-apollo-buggy',
     make: 'AUTOAVENTUS',
-    model: 'Apollo Lunar Outlaw',
+    model: 'Apollo Sport Dune Buggy',
     year: 2025,
     startingPrice: 34000000,
-    engineType: 'Tesla Ion Drive',
-    category: 'Lunar Outlaw',
-    description: 'An open-air high-velocity buggy built for absolute fun on zero-gravity gravel trails. Composed of raw carbon safety cages, dynamic solar wing collectors, and light track wheels inspired by moon-landings.',
+    engineType: 'Electric Dual-Motor',
+    category: 'Sports Buggy',
+    description: 'An open-air high-velocity recreation vehicle built for absolute fun on rugged sand dunes and gravel trails. Features an ultra-light carbon fiber monocoque safety cell, dual high-torque electric motors, and long-travel off-road active dampers.',
     performance: {
       acceleration: '2.2s',
       horsepower: 950,
       topSpeed: '160 mph',
-      engine: 'High-Velocity Tesla Ion Grid',
+      engine: 'Dual-Motor High-Output Electric Drive',
       drivetrain: 'Active Dynamic RWD',
       fuelCapacity: '80 Liters'
     },
@@ -145,12 +151,12 @@ export const INITIAL_CARS: Car[] = [
     ],
     colors: [
       {
-        name: 'Solar Flaring Orange',
+        name: 'Solar Orange',
         hex: '#D95C14',
         imageUrl: 'https://images.unsplash.com/photo-1547038577-da80abbc4f19?auto=format&fit=crop&q=80&w=1200'
       },
       {
-        name: 'Hypercar Matte Black',
+        name: 'Matte Black',
         hex: '#111111',
         imageUrl: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&q=80&w=1200'
       }
@@ -158,18 +164,18 @@ export const INITIAL_CARS: Car[] = [
     trims: [
       {
         id: 'apollo-buggy-base',
-        name: 'Lunar Dune Bugger Base',
+        name: 'Dune Buggy Base',
         price: 34000000,
-        engine: 'High-Velocity Tesla Ion Grid',
+        engine: 'Dual-Motor High-Output Electric',
         horsepower: 950,
         acceleration: '2.2s',
         topSpeed: '160 mph'
       },
       {
         id: 'apollo-buggy-outlaw',
-        name: 'Outlaw Lunar Speedster (Carbon Tub)',
+        name: 'Outlaw Extreme (Carbon Tub)',
         price: 39500000,
-        engine: 'Quad-Motor Lithium Ion Vector Pulse',
+        engine: 'Quad-Motor Torque Vectoring System',
         horsepower: 1100,
         acceleration: '2.0s',
         topSpeed: '172 mph'
@@ -183,15 +189,15 @@ export const INITIAL_CARS: Car[] = [
     model: 'Polaris Heavy Overlander',
     year: 2026,
     startingPrice: 78000000,
-    engineType: 'Hydrogen Hybrid',
-    category: 'Deep-Space Utility',
-    description: 'Constructed to withstand hazardous atmospheres and extreme temperature swings. Polar is a majestic overland cruiser featuring full self-sufficient sleep berths, oxygen filtration, and liquid-hydrogen high-efficiency cells.',
+    engineType: 'Hydrogen Fuel-Cell Hybrid',
+    category: 'Heavy Cruiser & SUV',
+    description: 'An executive-level grand overland cruiser engineered specifically for long-distance remote exploration. Features active climate control, integrated luxury sleeping quarters, premium water purification, and an ultra-efficient hydrogen fuel-cell hybrid powertrain.',
     performance: {
       acceleration: '3.4s',
       horsepower: 1450,
       topSpeed: '205 mph',
-      engine: 'Multiphase Liquid Hydrogen Twin System',
-      drivetrain: 'Intelligent Continuous AWD',
+      engine: 'Hydrogen Fuel-Cell Hybrid System',
+      drivetrain: 'Continuous Active All-Terrain 4x4',
       fuelCapacity: '110 Liters'
     },
     mainImage: 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&q=80&w=1200',
@@ -202,12 +208,12 @@ export const INITIAL_CARS: Car[] = [
     ],
     colors: [
       {
-        name: 'Atmospheric White Satin',
+        name: 'Satin White Pearl',
         hex: '#E5E8E4',
         imageUrl: 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&q=80&w=1200'
       },
       {
-        name: 'Abyssal Black Deep Gloss',
+        name: 'Gloss Obsidian Black',
         hex: '#0A0A0B',
         imageUrl: 'https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?auto=format&fit=crop&q=80&w=1200'
       }
@@ -217,16 +223,16 @@ export const INITIAL_CARS: Car[] = [
         id: 'polaris-overlander-base',
         name: 'Polaris Heavy 4x4 Standard',
         price: 78000000,
-        engine: 'Multiphase Liquid Hydrogen Drive',
+        engine: 'Hydrogen Fuel-Cell Hybrid System',
         horsepower: 1450,
         acceleration: '3.4s',
         topSpeed: '205 mph'
       },
       {
         id: 'polaris-dome-lux',
-        name: 'Dome Residence Lux Edition',
+        name: 'Residence Luxury Suite',
         price: 89000000,
-        engine: 'Overbuilt Hydrogen Fuel Cell Matrix + Battery Reserve',
+        engine: 'Aventur Heavy Duty Fuel-Cell Array',
         horsepower: 1600,
         acceleration: '3.2s',
         topSpeed: '210 mph'
@@ -237,18 +243,18 @@ export const INITIAL_CARS: Car[] = [
   {
     id: 'autoaventus-nemesis-plasma',
     make: 'AUTOAVENTUS',
-    model: 'Nemesis Plasma Racer',
+    model: 'Nemesis Hypercar RS',
     year: 2026,
     startingPrice: 91000000,
-    engineType: 'Bi-Turbo Plasma',
-    category: 'Martian Cruiser',
-    description: 'A pure track-focused absolute beast. Nemesis utilizes a super-dense plasma burner array that compresses cosmic elements for immediate warp-like velocity. Composed of an vacuum-venturi aerodynamic hull and hypercar stance.',
+    engineType: 'Quad-Turbocharged V12',
+    category: 'Hypercar',
+    description: 'An ultimate track-focused hybrid monster. Nemesis utilizes a bespoke state-of-the-art quad-turbocharged V12 engine paired with high-performance lightweight electric motors for neck-snapping acceleration and speed. Aerodynamically sculpted for high downforce.',
     performance: {
       acceleration: '1.7s',
       horsepower: 1800,
       topSpeed: '285 mph',
-      engine: 'Bespoke Dual-Turbo Charged Plasma Burner',
-      drivetrain: 'Magneto-Tuned Vector AWD',
+      engine: 'Bespoke Quad-Turbocharged Hybrid V12',
+      drivetrain: 'Electro-Active Vector AWD',
       fuelCapacity: '70 Liters'
     },
     mainImage: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&q=80&w=1200',
@@ -259,12 +265,12 @@ export const INITIAL_CARS: Car[] = [
     ],
     colors: [
       {
-        name: 'Nemesis Gloss Charcoal',
+        name: 'Gloss Charcoal Metallic',
         hex: '#2B2B2C',
         imageUrl: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&q=80&w=1200'
       },
       {
-        name: 'Racing Core Giallo',
+        name: 'Racing Core Yellow',
         hex: '#EDC948',
         imageUrl: 'https://images.unsplash.com/photo-1617531653332-bd46c24f2068?auto=format&fit=crop&q=80&w=1200'
       }
@@ -272,18 +278,18 @@ export const INITIAL_CARS: Car[] = [
     trims: [
       {
         id: 'nemesis-base',
-        name: 'Standard Plasma Burner',
+        name: 'Standard V12 Hybrid',
         price: 91000000,
-        engine: 'Bespoke Dual-Turbocharged Plasma Burner',
+        engine: 'Bespoke Quad-Turbocharged Hybrid V12',
         horsepower: 1800,
         acceleration: '1.7s',
         topSpeed: '285 mph'
       },
       {
         id: 'nemesis-apex',
-        name: 'Apex Solar Fusion Championship Spec',
+        name: 'Apex GTR Championship Spec',
         price: 115000000,
-        engine: 'Triple-Stage Magnetic Plasma Accelerator Core',
+        engine: 'Championship Tuned Hybrid V12 Matrix',
         horsepower: 2150,
         acceleration: '1.55s',
         topSpeed: '305 mph'
@@ -294,18 +300,18 @@ export const INITIAL_CARS: Car[] = [
   {
     id: 'autoaventus-zenith-yacht',
     make: 'AUTOAVENTUS',
-    model: 'Zenith Space Yacht',
+    model: 'Zenith Presidential Cruiser',
     year: 2026,
     startingPrice: 320000000,
-    engineType: 'Quantum Overdrive',
-    category: 'Interstellar GT',
-    description: 'Unprecedented opulence fused with ultimate mechanics. Zenith features gold-leaf heatshields, a full self-regulating lounge cabin with floating leather captain seats, and a silent quantum resonance engine that moves beyond standard speed limitations.',
+    engineType: 'V12 Twin-Turbo',
+    category: 'Sedan Yacht Class',
+    description: 'Unprecedented luxury and automotive grandeur. Zenith features hand-polished precious metal detailing, a private noise-insulated rear cabin with reclining leather massage seats, a dynamic star-pattern starlight headliner, and a whisper-silent twin-turbocharged V12.',
     performance: {
       acceleration: '1.2s',
       horsepower: 3200,
       topSpeed: '340 mph',
-      engine: 'Quantum Resonance Slipstream Core',
-      drivetrain: 'Dynamic Gravitational Suspension',
+      engine: 'Whisper-Silent Twin-Turbocharged V12',
+      drivetrain: 'Active-Leveling Magic Carpet Suspension',
       fuelCapacity: '130 Liters'
     },
     mainImage: 'https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&q=80&w=1200',
@@ -316,7 +322,7 @@ export const INITIAL_CARS: Car[] = [
     ],
     colors: [
       {
-        name: 'Quantum Satin Gold',
+        name: 'Royal Aurum Gold',
         hex: '#D4AF37',
         imageUrl: 'https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&q=80&w=1200'
       },
@@ -329,18 +335,18 @@ export const INITIAL_CARS: Car[] = [
     trims: [
       {
         id: 'zenith-base',
-        name: 'Zenith Space Suite Standard',
+        name: 'Presidential Suite Standard',
         price: 320000000,
-        engine: 'Quantum Resonance Slipstream Core',
+        engine: 'Zenith Custom V12 Twin-Turbo',
         horsepower: 3200,
         acceleration: '1.2s',
         topSpeed: '340 mph'
       },
       {
         id: 'zenith-monarch',
-        name: 'Monarch Royal Bespoke (24K Gold Plated Details)',
+        name: 'Monarch Bespoke (Gold Accessories)',
         price: 385000000,
-        engine: 'Overclocked Dual-Node Quantum Slipstream Engine',
+        engine: 'Zenith Royal Overdrive V12 Hybrid',
         horsepower: 3600,
         acceleration: '1.1s',
         topSpeed: '360 mph'

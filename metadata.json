@@ -1,6 +1,6 @@
 {
   "name": "AutoAventus",
-  "description": "An immersive luxury space vehicle and extraterrestrial explorer rover showcase inspired by the AutoAventus universe, featuring high-fidelity configurator, performance telemetry, and admin vault.",
+  "description": "An immersive luxury exotic car showroom and configurator featuring high-fidelity custom paint options, detailed mechanical specifications, reservation capabilities, and metadata controls.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

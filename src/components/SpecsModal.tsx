@@ -11,6 +11,7 @@ interface SpecsModalProps {
 
 export default function SpecsModal({ car, onClose }: SpecsModalProps) {
   // Configured states
+  const [overrideImageUrl, setOverrideImageUrl] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<ColorOption>(car.colors[0] || { name: 'Standard', hex: '#666', imageUrl: car.mainImage });
   const [selectedTrim, setSelectedTrim] = useState<TrimLevel>(car.trims[0] || {
     id: 'default',
@@ -55,6 +56,7 @@ export default function SpecsModal({ car, onClose }: SpecsModalProps) {
 
   // Synchronize dynamic elements if car changes
   useEffect(() => {
+    setOverrideImageUrl(null);
     if (car.colors && car.colors.length > 0) {
       setSelectedColor(car.colors[0]);
     }
@@ -65,6 +67,7 @@ export default function SpecsModal({ car, onClose }: SpecsModalProps) {
 
   // Handle color click
   const selectColor = (color: ColorOption) => {
+    setOverrideImageUrl(null);
     setSelectedColor(color);
   };
 
@@ -122,12 +125,12 @@ export default function SpecsModal({ car, onClose }: SpecsModalProps) {
             <div className="absolute w-[400px] h-[150px] bg-[#8B0000]/10 blur-[80px] rounded-full bottom-0 left-1/2 -translate-x-1/2" />
 
             <motion.img
-              key={selectedColor.imageUrl}
+              key={overrideImageUrl || selectedColor.imageUrl}
               initial={{ opacity: 0, scale: 0.96, filter: 'blur(4px)' }}
               animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
               transition={{ duration: 0.35 }}
-              src={selectedColor.imageUrl}
-              alt={`${car.make} ${car.model} in ${selectedColor.name}`}
+              src={overrideImageUrl || selectedColor.imageUrl}
+              alt={`${car.make} ${car.model}`}
               className="relative z-0 max-h-[85%] max-w-[90%] object-contain drop-shadow-[0_20px_45px_rgba(0,0,0,0.95)]"
               referrerPolicy="no-referrer"
             />
@@ -299,7 +302,7 @@ export default function SpecsModal({ car, onClose }: SpecsModalProps) {
             </div>
 
             {/* Right Column (5 cols): Dyno specs & core telemetry widgets */}
-            <div className="lg:col-span-12 xl:col-span-5 flex flex-col gap-6">
+            <div className="lg:col-span-5 flex flex-col gap-6">
               <h3 className="text-[9px] font-mono tracking-widest text-[#8B0000] uppercase font-black">
                 Car Performance Stats
               </h3>
@@ -663,19 +666,35 @@ export default function SpecsModal({ car, onClose }: SpecsModalProps) {
               {car.images && car.images.length > 0 && (
                 <div className="mt-2">
                   <span className="text-[8px] font-mono tracking-widest text-zinc-500 uppercase block mb-3 font-bold">
-                    More Photos
+                    Explore Alternate Views ({car.images.length})
                   </span>
-                  <div className="grid grid-cols-3 gap-3">
-                    {car.images.slice(0, 3).map((img, i) => (
-                      <div key={i} className="h-16 rounded-sm bg-black border border-zinc-900 overflow-hidden group">
-                        <img 
-                          src={img} 
-                          alt="Alternate view" 
-                          className="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-350"
-                          referrerPolicy="no-referrer"
-                        />
-                      </div>
-                    ))}
+                  <div className="grid grid-cols-4 sm:grid-cols-5 gap-2.5">
+                    {car.images.map((img, idx) => {
+                      const isActive = overrideImageUrl === img || (!overrideImageUrl && selectedColor.imageUrl === img);
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => setOverrideImageUrl(img)}
+                          className={`h-11 sm:h-14 rounded-sm bg-black border overflow-hidden transition-all duration-300 relative cursor-pointer group ${
+                            isActive ? 'border-[#8B0000] scale-[1.02] shadow-[0_0_10px_rgba(139,0,0,0.3)]' : 'border-zinc-900 hover:border-zinc-750'
+                          }`}
+                          title={`View camera layout ${idx + 1}`}
+                        >
+                          <img 
+                            src={img} 
+                            alt={`View ${idx + 1}`} 
+                            className={`w-full h-full object-cover transition-all duration-350 ${
+                              isActive ? 'opacity-100' : 'opacity-40 group-hover:opacity-100 group-hover:scale-105'
+                            }`}
+                            referrerPolicy="no-referrer"
+                          />
+                          {isActive && (
+                            <div className="absolute right-1 bottom-1 w-1.5 h-1.5 rounded-full bg-[#8B0000]" />
+                          )}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               )}

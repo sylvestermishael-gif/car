@@ -29,8 +29,8 @@ export interface Car {
   model: string;
   year: number;
   startingPrice: number;
-  engineType: 'Nuclear Fusion' | 'Hydrogen Hybrid' | 'Tesla Ion Drive' | 'Bi-Turbo Plasma' | 'Quantum Overdrive' | 'Electric' | 'Gasoline' | 'Fuel';
-  category: 'Interstellar GT' | 'Martian Cruiser' | 'Lunar Outlaw' | 'Deep-Space Utility' | 'Luxury SUV' | 'Performance Sedan';
+  engineType: string;
+  category: string;
   description: string;
   performance: CarPerformance;
   mainImage: string;
@@ -40,7 +40,7 @@ export interface Car {
   isPublic: boolean;
 }
 
-export type EngineTypeFilter = 'All' | 'Nuclear Fusion' | 'Hydrogen Hybrid' | 'Tesla Ion Drive' | 'Bi-Turbo Plasma' | 'Quantum Overdrive' | 'Electric' | 'Gasoline' | 'Fuel';
+export type EngineTypeFilter = 'All' | string;
 
 export interface FilterState {
   searchQuery: string;
